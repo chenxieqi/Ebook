@@ -1,21 +1,20 @@
-# ebook
+# Ebook
+ebook display using Vue.js
 
-> A Vue.js project
+### 言語
+javascript
+### フレームワーク
+Vue.js
 
-## Build Setup
+### 期間
+制作中
 
-``` bash
-# install dependencies
-npm install
+### 説明
 
-# serve with hot reload at localhost:8080
-npm run dev
+Epubファイル閲覧サイト<br>
 
-# build for production with minification
-npm run build
+実現した機能：<br>
+1.Epubの閲覧、ページのめぐり<br>
+2.メニューバーの表示<br>
+3.フォントのサイズ変更<br>
 
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
