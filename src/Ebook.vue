@@ -9,8 +9,14 @@
             <div class="right" @click="nextPage"></div>
           </div>
       </div>
-      <menu-bar :ifTitleAndMenuShow="ifTitleAndMenuShow" :fontSizeList="fontSizeList"
-      :defaultFontSize="defaultFontSize" @setFontSize="setFontSize" ref="MenuBar"></menu-bar>
+      <menu-bar :ifTitleAndMenuShow="ifTitleAndMenuShow"
+      :fontSizeList="fontSizeList"
+      :defaultFontSize="defaultFontSize"
+      @setFontSize="setFontSize"
+      :themeList="themeList"
+      :defaultTheme="defaultTheme"
+      @themeSelect="themeSelect"
+      ref="MenuBar"></menu-bar>
   </div>
 </template>
 
@@ -37,13 +43,61 @@ export default {
         {fontSize: 22},
         {fontSize: 24}
       ],
-      defaultFontSize: 16
+      defaultFontSize: 16,
+      themeList: [
+        {
+          name: 'default',
+          style: {
+            body: {
+              'color': '#000', 'background': '#fff'
+            }
+          }
+        },
+        {
+          name: 'eye',
+          style: {
+            body: {
+              'color': '#000', 'background': '#ceeaba'
+            }
+          }
+        },
+        {
+          name: 'night',
+          style: {
+            body: {
+              'color': '#fff', 'background': '#000'
+            }
+          }
+        },
+        {
+          name: 'gold',
+          style: {
+            body: {
+              'color': '#000', 'background': 'rgb(241, 236, 226)'
+            }
+          }
+        }
+      ],
+      defaultTheme: 0
     }
   },
   mounted() {
     this.showEpub()
   },
   methods: {
+    themesRegister() {
+      if (this.themes) {
+        this.themeList.forEach(theme => {
+          this.themes.register(theme.name, theme.style)
+        }
+        )
+      }
+    },
+    themeSelect(index) {
+      if (this.themes) {
+        this.themes.select(this.themeList[index].name)
+      }
+    },
     setFontSize(fontSize) {
       this.defaultFontSize = fontSize
       if (this.themes) {
@@ -81,6 +135,9 @@ export default {
       this.rendition.display()
       this.themes = this.rendition.themes
       this.setFontSize(this.defaultFontSize)
+      // redition.themes.register(name, style)
+      // redition.themes.select(name)
+      this.themesRegister()
     }
   }
 }
