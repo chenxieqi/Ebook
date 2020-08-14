@@ -16,6 +16,8 @@
       :themeList="themeList"
       :defaultTheme="defaultTheme"
       @themeSelect="themeSelect"
+      :bookAvailable="bookAvailable"
+      @onProgressChange="onProgressChange"
       ref="MenuBar"></menu-bar>
   </div>
 </template>
@@ -78,13 +80,20 @@ export default {
           }
         }
       ],
-      defaultTheme: 0
+      defaultTheme: 0,
+      bookAvailable: false
     }
   },
   mounted() {
     this.showEpub()
   },
   methods: {
+    // progress: number 0-100
+    onProgressChange(progress) {
+      const percentage = progress / 100
+      const location = percentage > 0 ? this.locations.cfiFromPercentage(percentage) : 0
+      this.rendition.display(location)
+    },
     themesRegister() {
       if (this.themes) {
         this.themeList.forEach(theme => {
@@ -138,6 +147,13 @@ export default {
       // redition.themes.register(name, style)
       // redition.themes.select(name)
       this.themesRegister()
+      // ready: hook function
+      this.book.ready.then(() => {
+        return this.book.locations.generate()
+      }).then(result => {
+        this.locations = this.book.locations
+        this.bookAvailable = true
+      })
     }
   }
 }

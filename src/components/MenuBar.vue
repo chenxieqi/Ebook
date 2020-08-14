@@ -6,7 +6,7 @@
                 <span class="icon-menu icon"></span>
                 </div>
                 <div class="icon-wapper">
-                <span class="icon-progress icon"></span>
+                <span class="icon-progress icon" @click="showSetting(2)"></span>
                 </div>
                 <div class="icon-wapper">
                 <span class="icon-bright icon" @click="showSetting(1)"></span>
@@ -41,6 +41,24 @@
                     <div class="text" :class="{'selected': index === defaultTheme}">{{item.name}}</div>
                   </div>
                 </div>
+                <div class="setting-progress" v-else-if="showTag === 2">
+                  <div class="progress-wrapper">
+                    <input class="progress"
+                    type="range"
+                    max="100"
+                    min="0"
+                    step="1"
+                    @change="onProgressChange($event.target.value)"
+                    @input="onProgressInput($event.target.value)"
+                    :value="progress"
+                    :disabled="!bookAvailable"
+                    ref="progress"
+                    >
+                  </div>
+                  <div class="text-wrapper">
+                    <span>{{bookAvailable ? progress + '%' : 'loading'}}</span>
+                  </div>
+                </div>
             </div>
         </transition>
     </div>
@@ -57,16 +75,24 @@ export default {
     defaultFontSize: Number,
     themeList: Array,
     defaultTheme: Number,
-    showTag: 0
+    bookAvailable: Boolean
   },
   data() {
     return {
-      ifSettingShow: false
+      ifSettingShow: false,
+      showTag: 0,
+      progress: 0
     }
   },
   methods: {
+    onProgressInput(progress) {
+      this.progress = progress
+      this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
+    },
+    onProgressChange(progress) {
+      this.$emit('onProgressChange', progress)
+    },
     setTheme(index) {
-      this.defaultTheme = index
       this.$emit('themeSelect', index)
     },
     showSetting(tag) {
@@ -206,6 +232,46 @@ export default {
               color: #333333;
             }
           }
+        }
+      }
+      .setting-progress{
+        position: relative;
+        width: 100%;
+        height:100%;
+        .progress-wrapper {
+          width: 100%;
+          height: 100%;
+          @include center;
+          padding: 0 px2rem(30);
+          box-sizing: border-box;
+          .progress {
+            width: 100%;
+            -webkit-appearance: none;
+            height: px2rem(2);
+            background: -webkit-linear-gradient(#999,#999) no-repeat #dddddd;
+            background-size: 0 100%;
+            &:focus {
+              outline: none;
+            }
+            &::-webkit-slider-thumb{
+              -webkit-appearance: none;
+              width: px2rem(20);
+              height: px2rem(20);
+              border-radius: 50%;
+              background: white;
+              box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .15);
+              border: px2rem(1) solid #cccccc;
+            }
+          }
+        }
+        .text-wrapper {
+          font-size: px2rem(12);
+          color: #333333;
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          text-align: center;
         }
       }
   }
