@@ -18,6 +18,8 @@
       @themeSelect="themeSelect"
       :bookAvailable="bookAvailable"
       @onProgressChange="onProgressChange"
+      :navigation="navigation"
+      @jumpTo="jumpTo"
       ref="MenuBar"></menu-bar>
   </div>
 </template>
@@ -81,13 +83,20 @@ export default {
         }
       ],
       defaultTheme: 0,
-      bookAvailable: false
+      bookAvailable: false,
+      navigation: {}
     }
   },
-  mounted() {
-    this.showEpub()
-  },
   methods: {
+    // jump to xx page
+    jumpTo(href) {
+      this.rendition.display(href)
+      this.hideTitleAndMenu()
+    },
+    hideTitleAndMenu() {
+      this.ifTitleAndMenuShow = false
+      this.$refs.MenuBar.hideSetting()
+    },
     // progress: number 0-100
     onProgressChange(progress) {
       const percentage = progress / 100
@@ -116,7 +125,7 @@ export default {
     toggleTitleAndMenu() {
       this.ifTitleAndMenuShow = !this.ifTitleAndMenuShow
       if (!this.ifTitleAndMenuShow) {
-        this.$refs.MenuBar.hideFontSetting()
+        this.$refs.MenuBar.hideSetting()
       }
     },
     prevPage() {
@@ -149,12 +158,17 @@ export default {
       this.themesRegister()
       // ready: hook function
       this.book.ready.then(() => {
+        this.navigation = this.book.navigation
+        console.log(this.navigation)
         return this.book.locations.generate()
       }).then(result => {
         this.locations = this.book.locations
         this.bookAvailable = true
       })
     }
+  },
+  mounted() {
+    this.showEpub()
   }
 }
 </script>

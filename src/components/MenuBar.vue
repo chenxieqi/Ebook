@@ -3,7 +3,7 @@
         <transition name="slide-up">
             <div class="menu-wapper" :class="{'hide-box-shadow':ifSettingShow||!ifTitleAndMenuShow}" v-show="ifTitleAndMenuShow">
                 <div class="icon-wapper">
-                <span class="icon-menu icon"></span>
+                <span class="icon-menu icon" @click="showSetting(3)"></span>
                 </div>
                 <div class="icon-wapper">
                 <span class="icon-progress icon" @click="showSetting(2)"></span>
@@ -56,16 +56,31 @@
                     >
                   </div>
                   <div class="text-wrapper">
-                    <span>{{bookAvailable ? progress + '%' : 'loading'}}</span>
+                    <span>{{bookAvailable ? progress + '%' : 'loading...'}}</span>
                   </div>
                 </div>
             </div>
+        </transition>
+        <content-view :ifShowContent="ifShowContent"
+                      v-show="ifShowContent"
+                      :bookAvailable="bookAvailable"
+                      :navigation="navigation"
+                      @jumpTo="jumpTo"
+                      @hideSetting="hideSetting"
+                      @hideContent="hideContent">
+        </content-view>
+        <transition name="fade">
+          <div class="content-mask" v-show="ifShowContent" @click="hideContent"></div>
         </transition>
     </div>
 </template>
 
 <script>
+import ContentView from '@/components/Content'
 export default {
+  components: {
+    ContentView
+  },
   props: {
     ifTitleAndMenuShow: {
       type: Boolean,
@@ -75,16 +90,27 @@ export default {
     defaultFontSize: Number,
     themeList: Array,
     defaultTheme: Number,
-    bookAvailable: Boolean
+    bookAvailable: {
+      type: Boolean,
+      default: false
+    },
+    navigation: Object
   },
   data() {
     return {
       ifSettingShow: false,
       showTag: 0,
-      progress: 0
+      progress: 0,
+      ifShowContent: false
     }
   },
   methods: {
+    hideContent() {
+      this.ifShowContent = false
+    },
+    jumpTo(href) {
+      this.$emit('jumpTo', href)
+    },
     onProgressInput(progress) {
       this.progress = progress
       this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
@@ -96,10 +122,15 @@ export default {
       this.$emit('themeSelect', index)
     },
     showSetting(tag) {
-      this.ifSettingShow = true
       this.showTag = tag
+      if (this.showTag === 3) {
+        this.ifSettingShow = false
+        this.ifShowContent = true
+      } else {
+        this.ifSettingShow = true
+      }
     },
-    hideFontSetting() {
+    hideSetting() {
       this.ifSettingShow = false
     },
     setFontSize(fontSize) {
@@ -274,6 +305,16 @@ export default {
           text-align: center;
         }
       }
+  }
+  .content-mask {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 101;
+    display: flex;
+    background: rgba(51, 51, 51, .8);
   }
 }
 </style>
