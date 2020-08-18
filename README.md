@@ -4,13 +4,13 @@ ebook display using Vue.js
 ### 言語
 javascript
 ### フレームワーク
-Vue.js
+Vue.js2.0
 
 ### 期間
-制作中
+1週間
 
 ### 説明
-
+初めてのVueプロジェクト
 Epubファイル閲覧サイト<br>
 
 実現した機能：<br>
